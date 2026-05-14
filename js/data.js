@@ -15,6 +15,8 @@
  * city: İhalenin ili (kartta kutucukta; görüntü cümle biçimi)
  * bidPdf: Teklif PDF'i (href proje köküne göre; download önerilen dosya adı)
  */
+import { germencikAydinParties } from "./data-germencik-parties.js";
+
 function katilimci(name, sira, teklifTr, teknikYuzde) {
   return {
     name,
@@ -146,6 +148,24 @@ export const tenders = [
         },
       },
     ],
+  },
+  {
+    ikn: "2025/2473742",
+    city: "Aydın",
+    title:
+      "Aydın Germencik Turanlar Mahallesi Alangüllü Deresi ve Neşetiye Mahallesi Köy Deresi Islahı 1. Kısım",
+    status: "eval",
+    dateISO: "2026-04-27",
+    timeLocal: "10:30",
+    products: [
+      { name: "Prefabrik cephe panelleri", qty: "25 m³" },
+      { name: "Prefabrik kiriş", qty: "67 ton" },
+    ],
+    bidPdf: {
+      href: "assets/pdf/teklif-taslak.pdf",
+      download: "Tork-Moduler-Teklif-IKN-2025-2473742.pdf",
+    },
+    parties: germencikAydinParties,
   },
   {
     ikn: "2026/260973",
