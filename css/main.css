@@ -1,0 +1,382 @@
+/* Tork Moduler — müşteri & ihale panosu */
+:root {
+  --blue-deep: #0a1f33;
+  --blue: #123a5c;
+  --blue-soft: #1e4d75;
+  --cream: #faf7f0;
+  --cream-muted: #f0ebe1;
+  --cream-border: #e2d9ca;
+  --ink: #141a22;
+  --ink-soft: #3d4756;
+  --white: #ffffff;
+  --status-open-bg: #e8f4ef;
+  --status-open-text: #1a5c40;
+  --status-open-border: #7ab89a;
+  --status-eval-bg: #fdf6e8;
+  --status-eval-text: #8a5a12;
+  --status-eval-border: #d4a84b;
+  --status-signed-bg: #e8f2eb;
+  --status-signed-text: #134d28;
+  --status-signed-border: #4d9a6a;
+  --shadow: 0 1px 2px rgba(10, 31, 51, 0.06), 0 8px 24px rgba(10, 31, 51, 0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: linear-gradient(165deg, var(--cream) 0%, var(--cream-muted) 45%, #e8e2d6 100%);
+  min-height: 100vh;
+}
+
+a {
+  color: var(--blue-soft);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--blue-deep);
+}
+
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+/* Header */
+.site-header {
+  margin-bottom: 2.75rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--cream-border);
+}
+
+.site-header__eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.site-header__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  color: var(--blue-deep);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 0.65rem;
+}
+
+.site-header__lead {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.legend__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.legend__swatch--open {
+  background: var(--status-open-border);
+  box-shadow: inset 0 0 0 2px var(--status-open-bg);
+}
+
+.legend__swatch--eval {
+  background: var(--status-eval-border);
+}
+
+.legend__swatch--signed {
+  background: var(--status-signed-border);
+}
+
+/* Tender grid */
+.tender-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tender-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(226, 217, 202, 0.85);
+  overflow: hidden;
+}
+
+.tender-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding: 1.35rem 1.5rem 1.1rem;
+  background: linear-gradient(180deg, rgba(250, 247, 240, 0.65) 0%, var(--white) 100%);
+  border-bottom: 1px solid var(--cream-border);
+}
+
+.tender-card__id {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
+  margin: 0 0 0.35rem;
+}
+
+.tender-card__name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--blue-deep);
+  margin: 0;
+  max-width: 36rem;
+  line-height: 1.3;
+}
+
+.tender-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.tender-card__date {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.tender-card__date strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Status pills */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+
+.status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status--open {
+  background: var(--status-open-bg);
+  color: var(--status-open-text);
+  border-color: rgba(122, 184, 154, 0.45);
+}
+
+.status--open::before {
+  background: var(--status-open-text);
+}
+
+.status--eval {
+  background: var(--status-eval-bg);
+  color: var(--status-eval-text);
+  border-color: rgba(212, 168, 75, 0.45);
+}
+
+.status--eval::before {
+  background: var(--status-eval-text);
+}
+
+.status--signed {
+  background: var(--status-signed-bg);
+  color: var(--status-signed-text);
+  border-color: rgba(92, 126, 179, 0.45);
+}
+
+.status--signed::before {
+  background: var(--status-signed-text);
+}
+
+/* Body grid: products | parties */
+.tender-card__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+@media (max-width: 820px) {
+  .tender-card__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  padding: 1.25rem 1.5rem 1.4rem;
+}
+
+.panel--products {
+  border-right: 1px solid var(--cream-border);
+}
+
+@media (max-width: 820px) {
+  .panel--products {
+    border-right: none;
+    border-bottom: 1px solid var(--cream-border);
+  }
+}
+
+.panel__title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
+  margin: 0 0 0.85rem;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.product-table th,
+.product-table td {
+  text-align: left;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--cream-border);
+  vertical-align: top;
+}
+
+.product-table th {
+  font-weight: 600;
+  color: var(--ink-soft);
+  width: 58%;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.product-table tr:last-child th,
+.product-table tr:last-child td {
+  border-bottom: none;
+}
+
+.product-table td:last-child {
+  font-variant-numeric: tabular-nums;
+  color: var(--blue-deep);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Participants */
+.party-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.party {
+  padding: 0.85rem 1rem;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--cream-border);
+}
+
+.party__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+  margin-bottom: 0.35rem;
+}
+
+.party__name {
+  font-weight: 600;
+  color: var(--blue-deep);
+  font-size: 0.92rem;
+}
+
+.party__tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--blue-soft);
+  border: 1px solid var(--cream-border);
+}
+
+.party__tag--winner {
+  background: var(--blue-deep);
+  color: var(--cream);
+  border-color: var(--blue-deep);
+}
+
+.party__note {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.site-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--cream-border);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
