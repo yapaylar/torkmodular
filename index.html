@@ -7,7 +7,7 @@
       name="description"
       content="Tork Moduler Yapı — EKAP kaynaklı müşteri ve ihale takip panosu"
     />
-    <title>Tork Moduler — İhale & müşteri özeti</title>
+    <title>Tork Moduler — İhale &amp; Müşteri Özeti</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,36 +20,56 @@
     <div class="page">
       <header class="site-header">
         <p class="site-header__eyebrow">Tork Moduler Yapı</p>
-        <h1 class="site-header__title">İhale &amp; müşteri özeti</h1>
+        <h1 class="site-header__title">İhale &amp; Müşteri Özeti</h1>
         <p class="site-header__lead">
           EKAP üzerinden takip edilen fırsatlar: ihale durumu, tarih, tedarik
           kapsamındaki ürünler ve muhtemel katılımcılar / kazanan firmalar tek
           ekranda.
         </p>
-        <ul class="legend" aria-label="İhale durumu göstergeleri">
-          <li class="legend__item">
-            <span class="legend__swatch legend__swatch--open" aria-hidden="true"></span>
-            Teklif vermeye açık
-          </li>
-          <li class="legend__item">
-            <span class="legend__swatch legend__swatch--eval" aria-hidden="true"></span>
-            Değerlendirme aşamasında
-          </li>
-          <li class="legend__item">
-            <span class="legend__swatch legend__swatch--signed" aria-hidden="true"></span>
-            Sözleşme imzalanmış
-          </li>
-        </ul>
       </header>
 
       <main>
-        <div id="tender-list" class="tender-list" aria-live="polite"></div>
+        <div
+          id="filter-bar"
+          class="filter-bar"
+          role="tablist"
+          aria-label="İhale durumuna göre filtrele"
+        ></div>
+        <div
+          id="tender-list"
+          class="tender-list"
+          role="tabpanel"
+          aria-live="polite"
+        ></div>
       </main>
-
-      <footer class="site-footer">
-        İçerik statiktir; kayıt eklemek veya güncellemek için
-        <code>js/data.js</code> dosyasını düzenleyin.
-      </footer>
+    </div>
+    <div
+      id="party-modal"
+      class="party-modal"
+      hidden
+      aria-hidden="true"
+    >
+      <div class="party-modal__backdrop" data-close-modal tabindex="-1"></div>
+      <div
+        class="party-modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="party-modal-title"
+        tabindex="-1"
+      >
+        <button
+          type="button"
+          class="party-modal__close"
+          data-close-modal
+          aria-label="Kapat"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+        <p class="party-modal__context" id="party-modal-context"></p>
+        <h2 class="party-modal__title" id="party-modal-title"></h2>
+        <p class="party-modal__role" id="party-modal-role"></p>
+        <div class="party-modal__body" id="party-modal-body"></div>
+      </div>
     </div>
     <script type="module" src="js/app.js"></script>
   </body>
