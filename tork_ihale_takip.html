@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TORK — İhale Takip Listesi</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --tork-navy: #10263B;
+  --tork-navy-deep: #0A1B2C;
+  --tork-silver: #C8D0DC;
+  --tork-silver-soft: #E8ECEF;
+  --tork-gold: #B8924A;
+  --tork-gold-light: #D4AF6A;
+  --bg: #F4F6F9;
+  --paper: #FFFFFF;
+  --line: #D8DEE6;
+  --line-soft: #ECEFF3;
+  --ink: #10263B;
+  --ink-soft: #5A6B7E;
+  --ink-mute: #8896A6;
+  --ankara-bg: #EAF0F8;
+  --ankara-border: #B0C4E0;
+  --kayseri-bg: #FBF1E2;
+  --kayseri-border: #E8C97D;
+  --green-bg: #E8F0EA;
+  --green: #1A6B3D;
+  --warn-bg: #FDF3E0;
+  --warn: #B8924A;
+  --urgent-bg: #FBE4E4;
+  --urgent: #8B2E2E;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 32px 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.paper {
+  max-width: 1280px;
+  margin: 0 auto;
+  background: var(--paper);
+  box-shadow: 0 1px 3px rgba(16,38,59,0.04), 0 12px 48px rgba(16,38,59,0.10);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.paper::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--tork-gold), var(--tork-gold-light), var(--tork-gold));
+  z-index: 5;
+}
+
+/* HEADER */
+.header { background: var(--tork-navy); color: white; }
+.header-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  align-items: stretch;
+}
+.header-logo {
+  background: var(--tork-navy-deep);
+  padding: 32px 24px;
+  display: flex; align-items: center; justify-content: center;
+  border-right: 1px solid rgba(200,208,220,0.08);
+  position: relative;
+}
+.header-logo::after {
+  content: ''; position: absolute; top: 50%; right: 0;
+  transform: translateY(-50%); width: 1px; height: 60%;
+  background: linear-gradient(to bottom, transparent, var(--tork-gold) 50%, transparent);
+}
+.header-logo img { width: 100%; max-width: 140px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3)); }
+.header-title { padding: 32px 36px; display: flex; flex-direction: column; justify-content: center; }
+.doc-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 600;
+  color: var(--tork-silver-soft);
+  letter-spacing: 0.5px; line-height: 1.1;
+}
+
+/* STATS */
+.header-stats {
+  display: flex; gap: 0;
+  border-left: 1px solid rgba(200,208,220,0.08);
+}
+.stat {
+  padding: 28px 28px;
+  text-align: center;
+  border-right: 1px solid rgba(200,208,220,0.06);
+  min-width: 100px;
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 600;
+  color: var(--tork-gold-light); line-height: 1;
+}
+.stat-lbl {
+  font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
+  color: rgba(200,208,220,0.6); text-transform: uppercase; margin-top: 6px;
+}
+
+/* TOOLBAR */
+.toolbar {
+  padding: 18px 32px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line-soft);
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.search-wrap { position: relative; flex: 1; max-width: 320px; }
+.search-wrap input {
+  width: 100%;
+  border: 1px solid var(--line);
+  padding: 9px 12px 9px 32px;
+  font-family: 'Inter', sans-serif; font-size: 12px;
+  outline: none; border-radius: 1px;
+  transition: border-color 0.2s;
+}
+.search-wrap input:focus { border-color: var(--tork-gold); }
+.search-wrap::before {
+  content: '⌕'; position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%); color: var(--ink-mute); font-size: 14px;
+}
+
+.filter-group { display: flex; gap: 6px; }
+.f-btn {
+  padding: 8px 14px; border: 1px solid var(--line);
+  background: var(--paper); color: var(--ink-soft);
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500;
+  letter-spacing: 1px; cursor: pointer; border-radius: 1px;
+  transition: all 0.15s; text-transform: uppercase;
+}
+.f-btn:hover { border-color: var(--tork-navy); color: var(--tork-navy); }
+.f-btn.active { background: var(--tork-navy); color: var(--tork-silver-soft); border-color: var(--tork-navy); }
+.f-btn.ankara.active { background: var(--ankara-border); border-color: var(--ankara-border); color: var(--tork-navy); }
+.f-btn.kayseri.active { background: var(--tork-gold); border-color: var(--tork-gold); color: white; }
+
+.toolbar-spacer { flex: 1; }
+.btn {
+  padding: 9px 18px; font-family: 'Inter', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; cursor: pointer; border-radius: 1px;
+  border: 1px solid; transition: all 0.2s;
+}
+.btn-primary { background: var(--tork-navy); color: var(--tork-silver-soft); border-color: var(--tork-navy); }
+.btn-primary:hover { background: var(--tork-navy-deep); }
+.btn-gold { background: var(--tork-gold); color: white; border-color: var(--tork-gold); }
+.btn-gold:hover { background: var(--tork-gold-light); }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead tr { background: var(--tork-navy); position: sticky; top: 0; z-index: 2; }
+thead th {
+  padding: 14px 12px;
+  color: var(--tork-silver-soft);
+  font-family: 'Inter', sans-serif;
+  font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; text-align: left; white-space: nowrap;
+  border-bottom: 2px solid var(--tork-gold);
+}
+thead th.center { text-align: center; }
+tbody tr {
+  border-bottom: 1px solid var(--line-soft);
+  transition: background 0.1s;
+}
+tbody tr.main-row { cursor: pointer; }
+tbody tr.main-row:hover { background: var(--bg); }
+tbody td { padding: 12px 12px; vertical-align: middle; }
+tbody tr.ankara { background: var(--ankara-bg); }
+tbody tr.kayseri { background: var(--kayseri-bg); }
+tbody tr.pazarlik { background: var(--green-bg); }
+tbody tr.urgent { background: var(--urgent-bg); }
+tbody tr.warning { background: var(--warn-bg); }
+
+/* DETAIL ROW */
+tr.detail-row { display: none; }
+tr.detail-row.open { display: table-row; }
+tr.detail-row td {
+  padding: 0; background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+}
+.detail-content {
+  padding: 24px 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 320px;
+  gap: 28px;
+}
+.detail-section h4 {
+  font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
+  color: var(--tork-gold); text-transform: uppercase;
+  margin-bottom: 14px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+.detail-grid { display: grid; gap: 12px 20px; }
+.detail-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.detail-field { display: flex; flex-direction: column; gap: 4px; }
+.detail-field label {
+  font-size: 8.5px; font-weight: 600; letter-spacing: 2px;
+  color: var(--ink-mute); text-transform: uppercase;
+}
+.detail-field input, .detail-field select, .detail-field textarea {
+  border: none; border-bottom: 1px solid var(--line);
+  padding: 4px 0 6px;
+  font-family: 'Inter', sans-serif; font-size: 12px;
+  color: var(--ink); background: transparent; outline: none;
+}
+.detail-field input:focus, .detail-field select:focus, .detail-field textarea:focus {
+  border-bottom-color: var(--tork-gold);
+}
+.detail-field textarea {
+  border: 1px solid var(--line); padding: 8px 10px;
+  resize: vertical; min-height: 60px; line-height: 1.5;
+}
+
+/* CHECKLIST */
+.checklist {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 16px;
+}
+.check-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.check-item:last-child { border-bottom: none; }
+.check-item input[type=checkbox] {
+  width: 14px; height: 14px;
+  accent-color: var(--tork-gold); cursor: pointer;
+}
+.check-item label { cursor: pointer; flex: 1; color: var(--ink-soft); }
+.check-item input:checked + label {
+  color: var(--green); text-decoration: line-through;
+}
+.check-progress {
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.progress-bar {
+  flex: 1; height: 4px;
+  background: var(--line); border-radius: 2px; margin: 0 12px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--tork-gold);
+  transition: width 0.3s;
+}
+.progress-txt { font-size: 10px; color: var(--ink-soft); font-weight: 600; }
+
+/* CHIPS / BADGES */
+.badge {
+  display: inline-block; padding: 3px 8px;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; border-radius: 1px;
+  white-space: nowrap;
+}
+.b-acik { background: var(--tork-navy); color: var(--tork-silver-soft); }
+.b-pazarlik { background: var(--green); color: white; }
+.b-yapim { background: var(--ink-soft); color: white; }
+.b-mal { background: #6B5B8E; color: white; }
+.b-hizmet { background: #4A7B8A; color: white; }
+.b-ankara { background: var(--ankara-border); color: var(--tork-navy); }
+.b-kayseri { background: var(--tork-gold); color: white; }
+
+.kurum-tag {
+  display: inline-block; padding: 2px 8px;
+  background: rgba(16,38,59,0.06); color: var(--ink-soft);
+  font-size: 10px; font-weight: 500;
+  border-radius: 1px; margin-right: 4px;
+}
+
+/* DURUM SELECT */
+.durum-select {
+  border: 1px solid var(--line); padding: 5px 8px;
+  font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 600;
+  background: var(--paper); cursor: pointer; outline: none;
+  border-radius: 1px; color: var(--ink);
+  transition: all 0.2s;
+}
+.durum-select:focus { border-color: var(--tork-gold); }
+
+/* DURUM RENKLERİ */
+.durum-select.takipte,
+.durum-select.dokuman {
+  background: #F4F6F9; color: var(--ink-soft);
+  border-color: var(--line);
+}
+.durum-select.teklif-hazir {
+  background: #FDF3E0; color: #8B6914;
+  border-color: #E8C97D;
+}
+.durum-select.teklif-verildi {
+  background: #E4ECF7; color: #1F4A8B;
+  border-color: #B0C4E8;
+}
+.durum-select.kazanildi {
+  background: #D9EDDF; color: #0A4D33;
+  border-color: #1A6B3D;
+}
+.durum-select.kaybedildi,
+.durum-select.iptal {
+  background: #FBE4E4; color: #8B2E2E;
+  border-color: #D88B8B;
+}
+
+/* COUNTDOWN */
+.countdown {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px; font-weight: 500;
+}
+.countdown.urgent { color: var(--urgent); font-weight: 700; }
+.countdown.warning { color: var(--warn); font-weight: 600; }
+.countdown.normal { color: var(--ink-soft); }
+
+/* STAR */
+.star-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 16px; color: var(--line); padding: 0;
+  transition: color 0.15s, transform 0.15s;
+}
+.star-btn.starred { color: var(--tork-gold-light); }
+.star-btn:hover { transform: scale(1.2); }
+
+/* EXPAND ICON */
+.expand-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-mute); font-size: 12px; padding: 4px 6px;
+  transition: transform 0.2s;
+}
+.expand-btn.open { transform: rotate(90deg); color: var(--tork-gold); }
+
+/* SECTION DIVIDERS */
+.section-divider td {
+  background: var(--tork-navy-deep);
+  color: var(--tork-gold-light);
+  font-family: 'Inter', sans-serif;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 3px;
+  padding: 8px 16px;
+  text-transform: uppercase;
+  border-top: 1px solid var(--tork-gold);
+}
+
+/* ADD FORM */
+.add-form {
+  display: none;
+  padding: 24px 32px;
+  background: #FBF8F1;
+  border-top: 2px solid var(--tork-gold);
+}
+.add-form.show { display: block; }
+.add-form-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; color: var(--tork-navy);
+  margin-bottom: 18px;
+}
+.add-grid {
+  display: grid;
+  grid-template-columns: 130px 180px 1fr 130px 130px;
+  gap: 12px; margin-bottom: 12px;
+}
+.add-grid input, .add-grid select {
+  border: 1px solid var(--line); padding: 8px 10px;
+  font-family: 'Inter', sans-serif; font-size: 12px;
+  outline: none; border-radius: 1px;
+}
+.add-grid input:focus, .add-grid select:focus { border-color: var(--tork-gold); }
+.add-grid-2 {
+  display: grid;
+  grid-template-columns: 240px 240px 1fr;
+  gap: 12px; margin-bottom: 14px;
+}
+.add-grid-2 input, .add-grid-2 select {
+  border: 1px solid var(--line); padding: 8px 10px;
+  font-family: 'Inter', sans-serif; font-size: 12px;
+  outline: none; border-radius: 1px;
+}
+.add-actions { display: flex; gap: 8px; }
+
+/* FOOTER */
+.footer {
+  background: var(--tork-navy);
+  color: rgba(200,208,220,0.6);
+  padding: 18px 36px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; letter-spacing: 1px;
+}
+.footer .gold { color: var(--tork-gold-light); font-weight: 500; }
+.footer .silver { color: var(--tork-silver); }
+
+@media print {
+  body { background: white; padding: 0; }
+  .paper { box-shadow: none; max-width: 100%; }
+  .toolbar, .add-form, .star-btn, .expand-btn { display: none !important; }
+  thead tr { position: static; }
+}
+</style>
+</head>
+<body>
+
+<div class="paper">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-grid">
+      <div class="header-logo">
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCAFqAZADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5Dooor3DxQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKK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" alt="TORK">
+      </div>
+      <div class="header-title">
+        <h1 class="doc-title">İhale Takip Listesi</h1>
+      </div>
+      <div class="header-stats">
+        <div class="stat"><div class="stat-num" id="s-total">15</div><div class="stat-lbl">Toplam</div></div>
+        <div class="stat"><div class="stat-num" id="s-ankara">7</div><div class="stat-lbl">Ankara</div></div>
+        <div class="stat"><div class="stat-num" id="s-kayseri">2</div><div class="stat-lbl">Kayseri</div></div>
+        <div class="stat"><div class="stat-num" id="s-urgent">0</div><div class="stat-lbl">Yakın</div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <a
+      href="index.html"
+      class="btn"
+      style="background:transparent;border:1px solid var(--line);color:var(--ink-soft);padding:9px 14px;font-size:10.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;border-radius:1px;white-space:nowrap"
+      >← İhale panosu</a
+    >
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="Kent · firma · iş tanımı ara..." oninput="render()">
+    </div>
+    <div class="filter-group">
+      <button class="f-btn ankara" id="f-ankara" onclick="setFilter('ankara')">Ankara</button>
+      <button class="f-btn kayseri" id="f-kayseri" onclick="setFilter('kayseri')">Kayseri</button>
+      <button class="f-btn" id="f-yakin" onclick="setFilter('yakin')">⚠ Yaklaşan</button>
+      <button class="f-btn" id="f-tum" onclick="setFilter(null)">Tümü</button>
+    </div>
+    <div class="toolbar-spacer"></div>
+    <button class="btn" onclick="exportIhale()" style="background:transparent;border:1px solid var(--line);color:var(--ink-soft);padding:8px 14px;font-size:10.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:1px;">📥 Dışa Aktar</button>
+    <label style="background:transparent;border:1px solid var(--line);color:var(--ink-soft);padding:9px 14px;font-size:10.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:1px;">
+      📤 İçe Aktar <input type="file" accept=".json" onchange="importIhale(this)" style="display:none">
+    </label>
+    <button class="btn btn-primary" onclick="window.print()">Yazdır</button>
+    <button class="btn btn-gold" onclick="toggleAdd()">+ Yeni İhale</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table id="ihale-table">
+      <thead>
+        <tr>
+          <th width="32" class="center">★</th>
+          <th width="32"></th>
+          <th width="90">Tarih</th>
+          <th width="90">Kalan</th>
+          <th width="160">Kent</th>
+          <th width="140">Kurum</th>
+          <th>Yapılacak İş</th>
+          <th width="90">Tür</th>
+          <th width="100">Usul</th>
+          <th width="120">Durum</th>
+          <th width="80" class="center">Belge</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ADD FORM -->
+  <div class="add-form" id="add-form">
+    <div class="add-form-title">Yeni İhale Ekle</div>
+    <div class="add-grid">
+      <input type="date" id="n-tarih">
+      <input type="text" id="n-kent" placeholder="Kent / Bölge">
+      <input type="text" id="n-is" placeholder="Yapılacak iş açıklaması">
+      <select id="n-tur">
+        <option>Yapım</option><option>Mal</option><option>Hizmet</option>
+      </select>
+      <select id="n-usul">
+        <option>Açık Usul</option><option>Pazarlık Usulü</option>
+      </select>
+    </div>
+    <div class="add-grid-2">
+      <input type="text" id="n-kurum" placeholder="İhale sahibi kurum (KGM, DSİ vb.)">
+      <input type="text" id="n-ekap" placeholder="EKAP İhale Kayıt No">
+      <input type="text" id="n-bedel" placeholder="Tahmini bedel (₺)">
+    </div>
+    <div class="add-actions">
+      <button class="btn btn-primary" onclick="addNew()">Kaydet</button>
+      <button class="btn" onclick="toggleAdd()" style="background:transparent;color:var(--ink-soft);border-color:var(--line)">İptal</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div>
+      <span class="silver">TORK MODÜLER YAPI SİSTEMLERİ A.Ş.</span> · 
+      <span class="gold">0533 367 06 06</span> · info@torkmoduleryapi.com
+    </div>
+    <div>torkmoduleryapi.com · <span class="gold">GÜÇLÜ YAPI · GÜVENLİ GELECEK</span></div>
+  </footer>
+
+</div>
+
+<script>
+const standardChecklist = [
+  "Ticaret Sicil Belgesi",
+  "İmza Sirküleri", 
+  "Vergi Levhası",
+  "SGK Borcu Yoktur Yazısı",
+  "Vergi Borcu Yoktur Yazısı",
+  "İhale Dosyası Satın Alındı",
+  "İş Deneyim Belgesi",
+  "Geçici Teminat Hazırlandı",
+  "Teklif Mektubu Hazır",
+  "Teklif Zarfı Teslim Edildi"
+];
+
+let ihaleler = [
+  {tarih:"05.05.2026", kent:"Ankara", is:"Kızılcahamam - Gerede Devlet Yolu köprü işleri, üstyapı ve çeşitli işler", usul:"Açık Usul", tur:"Yapım", kurum:"KGM", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"10:00", checklist:[]},
+  {tarih:"06.05.2026", kent:"Ankara", is:"Polatlı bin başlık koyun ağılı yapımı", usul:"Açık Usul", tur:"Yapım", kurum:"Polatlı Bld.", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"06.05.2026", kent:"Afyonkarahisar", is:"Başmakçı Belediyesi 11 adet sanayi dükkanı yapım işi", usul:"Açık Usul", tur:"Yapım", kurum:"Başmakçı Bld.", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"06.05.2026", kent:"Eskişehir", is:"Eskişehir Tabiat Parkı su deposu yapım işi", usul:"Açık Usul", tur:"Yapım", kurum:"Eskişehir Bb.", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"13.05.2026", kent:"Kayseri", is:"15 Temmuz Bulvarı - Özhaseki Bulvarı imar yolu ve katlı kavşak yapım işi", usul:"Açık Usul", tur:"Yapım", kurum:"Kayseri Bb.", durum:"Takipte", not:"", star:true, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"13.05.2026", kent:"Eskişehir", is:"TÜRESAŞ Eskişehir Bölge Müd. yeni lokomotif montaj fabrika yapımı", usul:"Açık Usul", tur:"Yapım", kurum:"TÜRESAŞ", durum:"Takipte", not:"Stratejik proje", star:true, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"20.05.2026", kent:"Çankırı", is:"Hazır beton ve beton bariyer alım işi", usul:"Açık Usul", tur:"Mal", kurum:"Çankırı İl Özel İd.", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"20.05.2026", kent:"Adana", is:"Yüreğir İlçesi Seyhan Mahallesi semt merkezi yapımı", usul:"Açık Usul", tur:"Yapım", kurum:"Yüreğir Bld.", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"21.05.2026", kent:"Çankırı", is:"Valilik Bölgesi Köprülü Kavşak İşi", usul:"Açık Usul", tur:"Yapım", kurum:"KGM", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"22.05.2026", kent:"Kayseri", is:"Yeniköy Mahallesi spor tesisi ve sentetik çim yapımı", usul:"Açık Usul", tur:"Yapım", kurum:"Kayseri Bb.", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"01.06.2026", kent:"Ankara", is:"3. Bölge şehir tanzimi ve duvar çevreleme işi", usul:"Açık Usul", tur:"Yapım", kurum:"Ankara Bb.", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"02.06.2026", kent:"Çorum", is:"TOKİ İlk İşyerim Projesi 225 adet işyeri, altyapı ve çevre düzenlemesi", usul:"Açık Usul", tur:"Yapım", kurum:"TOKİ", durum:"Takipte", not:"Büyük ölçekli", star:true, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"03.06.2026", kent:"Ankara / Samsun / Trabzon", is:"Muhtelif yerlerde fiber optik kablo altyapısı tesis edilmesi", usul:"Açık Usul", tur:"Yapım", kurum:"Türk Telekom / BTK", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"03.06.2026", kent:"Ankara", is:"Örnek köy uygulamaları hayvansal gübre depoları yapım işi", usul:"Açık Usul", tur:"Yapım", kurum:"Tarım Bk.", durum:"Takipte", not:"", star:false, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]},
+  {tarih:"03.06.2026", kent:"Ankara", is:"Boraks Penta üretim tesisi yapım işi", usul:"Pazarlık Usulü", tur:"Yapım", kurum:"Eti Maden", durum:"Takipte", not:"Pazarlık usulü", star:true, ekap:"", bedel:"", teminat:"", sorumlu:"", saat:"", checklist:[]}
+];
+
+let filterMode = null;
+let openRow = null;
+
+function parseDate(s) {
+  const [d,m,y] = s.split('.');
+  return new Date(`${y}-${m}-${d}`);
+}
+function daysUntil(s) {
+  const d = parseDate(s);
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.ceil((d - today) / (1000*60*60*24));
+}
+function formatBedel(b) {
+  if (!b) return '';
+  const n = parseInt(b.replace(/\D/g,''));
+  if (!n) return b;
+  return n.toLocaleString('tr-TR') + ' ₺';
+}
+
+function durumClass(durum) {
+  const map = {
+    'Takipte': 'takipte',
+    'Doküman Alındı': 'dokuman',
+    'Teklif Hazır': 'teklif-hazir',
+    'Teklif Verildi': 'teklif-verildi',
+    'Kazanıldı': 'kazanildi',
+    'Kaybedildi': 'kaybedildi',
+    'İptal': 'iptal'
+  };
+  return map[durum] || 'takipte';
+}
+
+function render() {
+  const tbody = document.getElementById('tbody');
+  const search = document.getElementById('search').value.toLowerCase();
+  tbody.innerHTML = '';
+  let count=0, ankaraC=0, kayseriC=0, urgentC=0;
+  let lastMonth = '';
+
+  ihaleler.forEach((d, i) => {
+    if (search && !d.kent.toLowerCase().includes(search) && !d.is.toLowerCase().includes(search) && !(d.kurum||'').toLowerCase().includes(search)) return;
+    if (filterMode === 'ankara' && !d.kent.includes('Ankara')) return;
+    if (filterMode === 'kayseri' && !d.kent.includes('Kayseri')) return;
+    const days = daysUntil(d.tarih);
+    if (filterMode === 'yakin' && days > 7) return;
+
+    count++;
+    if (d.kent.includes('Ankara')) ankaraC++;
+    if (d.kent.includes('Kayseri')) kayseriC++;
+    if (days <= 7 && days >= 0) urgentC++;
+
+    // month divider
+    const monthKey = d.tarih.split('.').slice(1).join('.');
+    const monthName = ['','Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'][parseInt(d.tarih.split('.')[1])];
+    if (monthKey !== lastMonth) {
+      lastMonth = monthKey;
+      const divTr = document.createElement('tr');
+      divTr.className = 'section-divider';
+      divTr.innerHTML = `<td colspan="11">${monthName} ${d.tarih.split('.')[2]}</td>`;
+      tbody.appendChild(divTr);
+    }
+
+    let rowClass = '';
+    if (d.kent.includes('Ankara')) rowClass = 'ankara';
+    else if (d.kent.includes('Kayseri')) rowClass = 'kayseri';
+    else if (d.usul === 'Pazarlık Usulü') rowClass = 'pazarlik';
+    if (days >= 0 && days <= 3) rowClass += ' urgent';
+    else if (days > 3 && days <= 7) rowClass += ' warning';
+
+    let countdownClass = 'normal', countdownText;
+    if (days < 0) { countdownText = `${Math.abs(days)} gün geçti`; countdownClass = 'urgent'; }
+    else if (days === 0) { countdownText = 'BUGÜN'; countdownClass = 'urgent'; }
+    else if (days <= 3) { countdownText = `${days} gün kaldı`; countdownClass = 'urgent'; }
+    else if (days <= 7) { countdownText = `${days} gün`; countdownClass = 'warning'; }
+    else { countdownText = `${days} gün`; countdownClass = 'normal'; }
+
+    const checkDone = (d.checklist || []).filter(x => x).length;
+    const checkTotal = standardChecklist.length;
+    const checkPct = Math.round((checkDone / checkTotal) * 100);
+
+    const turBadge = d.tur === 'Yapım' ? 'b-yapim' : (d.tur === 'Mal' ? 'b-mal' : 'b-hizmet');
+    const usulBadge = d.usul === 'Pazarlık Usulü' ? 'b-pazarlik' : 'b-acik';
+
+    // Main row
+    const tr = document.createElement('tr');
+    tr.className = 'main-row ' + rowClass;
+    tr.innerHTML = `
+      <td class="center"><button class="star-btn ${d.star?'starred':''}" onclick="event.stopPropagation();toggleStar(${i})">${d.star?'★':'☆'}</button></td>
+      <td><button class="expand-btn ${openRow===i?'open':''}" onclick="event.stopPropagation();toggleDetail(${i})">▶</button></td>
+      <td><div style="font-weight:500">${d.tarih}</div>${d.saat?`<div style="font-size:10px;color:var(--ink-mute)">${d.saat}</div>`:''}</td>
+      <td><span class="countdown ${countdownClass}">${countdownText}</span></td>
+      <td>${d.kent}</td>
+      <td><span class="kurum-tag">${d.kurum||'—'}</span></td>
+      <td style="font-size:12px;line-height:1.4">${d.is}</td>
+      <td><span class="badge ${turBadge}">${d.tur}</span></td>
+      <td><span class="badge ${usulBadge}">${d.usul}</span></td>
+      <td>
+        <select class="durum-select ${durumClass(d.durum)}" onclick="event.stopPropagation()" onchange="updateField(${i},'durum',this.value); render();">
+          ${['Takipte','Doküman Alındı','Teklif Hazır','Teklif Verildi','Kazanıldı','Kaybedildi','İptal'].map(s => `<option ${d.durum===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td class="center" style="font-size:10px;color:var(--ink-soft);font-weight:600">${checkDone}/${checkTotal}</td>
+    `;
+    tr.onclick = () => toggleDetail(i);
+    tbody.appendChild(tr);
+
+    // Detail row
+    const detailTr = document.createElement('tr');
+    detailTr.className = 'detail-row ' + (openRow === i ? 'open' : '');
+    detailTr.id = `detail-${i}`;
+    detailTr.innerHTML = `
+      <td colspan="11">
+        <div class="detail-content">
+          <div class="detail-section">
+            <h4>İhale Bilgileri</h4>
+            <div class="detail-grid cols-2">
+              <div class="detail-field">
+                <label>EKAP İhale Kayıt No</label>
+                <input type="text" value="${d.ekap}" placeholder="2026/000000" onchange="updateField(${i},'ekap',this.value)">
+              </div>
+              <div class="detail-field">
+                <label>İhale Saati</label>
+                <input type="time" value="${d.saat}" onchange="updateField(${i},'saat',this.value)">
+              </div>
+              <div class="detail-field">
+                <label>Tahmini Bedel</label>
+                <input type="text" value="${d.bedel}" placeholder="₺" onchange="updateField(${i},'bedel',this.value)">
+              </div>
+              <div class="detail-field">
+                <label>Geçici Teminat</label>
+                <input type="text" value="${d.teminat}" placeholder="₺" onchange="updateField(${i},'teminat',this.value)">
+              </div>
+              <div class="detail-field">
+                <label>Sorumlu Personel</label>
+                <input type="text" value="${d.sorumlu}" placeholder="Personel adı" onchange="updateField(${i},'sorumlu',this.value)">
+              </div>
+              <div class="detail-field">
+                <label>İhale Sahibi Kurum</label>
+                <input type="text" value="${d.kurum||''}" onchange="updateField(${i},'kurum',this.value)">
+              </div>
+              <div class="detail-field" style="grid-column:span 2">
+                <label>Notlar</label>
+                <textarea onchange="updateField(${i},'not',this.value)" placeholder="Önemli notlar, hatırlatmalar...">${d.not||''}</textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h4>İş Detayı</h4>
+            <div class="detail-field">
+              <label>Yapılacak İş</label>
+              <textarea onchange="updateField(${i},'is',this.value)" style="min-height:80px">${d.is}</textarea>
+            </div>
+            <div class="detail-grid cols-2" style="margin-top:14px">
+              <div class="detail-field">
+                <label>İhale Türü</label>
+                <select onchange="updateField(${i},'tur',this.value)">
+                  ${['Yapım','Mal','Hizmet'].map(s => `<option ${d.tur===s?'selected':''}>${s}</option>`).join('')}
+                </select>
+              </div>
+              <div class="detail-field">
+                <label>İhale Usulü</label>
+                <select onchange="updateField(${i},'usul',this.value)">
+                  ${['Açık Usul','Pazarlık Usulü','Belli İstekliler Arası'].map(s => `<option ${d.usul===s?'selected':''}>${s}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h4>Belge Kontrol</h4>
+            <div class="checklist">
+              ${standardChecklist.map((item, ci) => `
+                <div class="check-item">
+                  <input type="checkbox" id="ck-${i}-${ci}" ${(d.checklist||[])[ci]?'checked':''} onchange="toggleCheck(${i},${ci})">
+                  <label for="ck-${i}-${ci}">${item}</label>
+                </div>
+              `).join('')}
+              <div class="check-progress">
+                <span class="progress-txt">${checkDone}/${checkTotal}</span>
+                <div class="progress-bar"><div class="progress-fill" style="width:${checkPct}%"></div></div>
+                <span class="progress-txt">${checkPct}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(detailTr);
+  });
+
+  document.getElementById('s-total').textContent = count;
+  document.getElementById('s-ankara').textContent = ankaraC;
+  document.getElementById('s-kayseri').textContent = kayseriC;
+  document.getElementById('s-urgent').textContent = urgentC;
+}
+
+function toggleDetail(i) {
+  openRow = (openRow === i) ? null : i;
+  render();
+}
+function toggleStar(i) { ihaleler[i].star = !ihaleler[i].star; render(); }
+function updateField(i, field, val) { ihaleler[i][field] = val; }
+function toggleCheck(i, ci) {
+  ihaleler[i].checklist = ihaleler[i].checklist || [];
+  ihaleler[i].checklist[ci] = !ihaleler[i].checklist[ci];
+  render();
+}
+function setFilter(mode) {
+  filterMode = filterMode === mode ? null : mode;
+  ['ankara','kayseri','yakin'].forEach(m => {
+    const el = document.getElementById('f-'+m);
+    if (el) el.classList.toggle('active', filterMode === m);
+  });
+  render();
+}
+function toggleAdd() {
+  document.getElementById('add-form').classList.toggle('show');
+  document.getElementById('n-tarih').valueAsDate = new Date();
+}
+function addNew() {
+  const t = document.getElementById('n-tarih').value;
+  const kent = document.getElementById('n-kent').value.trim();
+  const is = document.getElementById('n-is').value.trim();
+  if (!kent || !is) { alert('Kent ve iş alanları zorunludur'); return; }
+  const d = new Date(t);
+  const tarih = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+  ihaleler.push({
+    tarih, kent, is,
+    tur: document.getElementById('n-tur').value,
+    usul: document.getElementById('n-usul').value,
+    kurum: document.getElementById('n-kurum').value,
+    ekap: document.getElementById('n-ekap').value,
+    bedel: document.getElementById('n-bedel').value,
+    durum: 'Takipte', not: '', star: false, teminat: '', sorumlu: '', saat: '', checklist: []
+  });
+  ihaleler.sort((a,b) => parseDate(a.tarih) - parseDate(b.tarih));
+  ['n-kent','n-is','n-kurum','n-ekap','n-bedel'].forEach(id => document.getElementById(id).value = '');
+  toggleAdd();
+  render();
+}
+
+// LOCALSTORAGE
+function saveIhale() {
+  try { localStorage.setItem('tork_ihaleler', JSON.stringify(ihaleler)); } catch(e) {}
+}
+function loadIhale() {
+  try {
+    const s = localStorage.getItem('tork_ihaleler');
+    if (s) { const p = JSON.parse(s); if (p && p.length) ihaleler = p; }
+  } catch(e) {}
+}
+
+// Orijinal fonksiyonları wrap et
+const _toggleStar = toggleStar;
+toggleStar = function(i) { ihaleler[i].star = !ihaleler[i].star; saveIhale(); render(); };
+
+const _deleteRow = deleteRow;
+if (typeof deleteRow !== 'undefined') {
+  deleteRow = function(i) {
+    if(confirm('Bu ihaley silinsin mi?')) { ihaleler.splice(i, 1); saveIhale(); render(); }
+  };
+}
+
+const _addNew = addNew;
+addNew = function() {
+  const t = document.getElementById('n-tarih').value;
+  const kent = document.getElementById('n-kent').value.trim();
+  const is = document.getElementById('n-is').value.trim();
+  if (!kent || !is) { alert('Kent ve iş alanları zorunludur'); return; }
+  const d = new Date(t);
+  const tarih = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+  ihaleler.push({
+    tarih, kent, is,
+    tur: document.getElementById('n-tur').value,
+    usul: document.getElementById('n-usul').value,
+    kurum: document.getElementById('n-kurum').value,
+    ekap: document.getElementById('n-ekap').value,
+    bedel: document.getElementById('n-bedel').value,
+    durum: 'Takipte', not: '', star: false, teminat: '', sorumlu: '', saat: '', checklist: []
+  });
+  ihaleler.sort((a,b) => parseDate(a.tarih) - parseDate(b.tarih));
+  ['n-kent','n-is','n-kurum','n-ekap','n-bedel'].forEach(id => document.getElementById(id).value = '');
+  toggleAdd();
+  saveIhale();
+  render();
+};
+
+// updateField wrap
+const _updateField = updateField;
+updateField = function(i, field, val) {
+  _updateField(i, field, val);
+  saveIhale();
+};
+
+// toggleCheck wrap
+const _toggleCheck = toggleCheck;
+toggleCheck = function(i, ci) {
+  ihaleler[i].checklist = ihaleler[i].checklist || [];
+  ihaleler[i].checklist[ci] = !ihaleler[i].checklist[ci];
+  saveIhale();
+  render();
+};
+
+function exportIhale() {
+  const json = JSON.stringify(ihaleler, null, 2);
+  const blob = new Blob([json], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const d = new Date();
+  a.download = `tork_ihaleler_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
+  a.click();
+}
+
+function importIhale(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!Array.isArray(parsed)) { alert('Geçersiz dosya'); return; }
+      if (!confirm(`${parsed.length} ihale yüklenecek. Mevcut veriler silinecek. Devam?`)) return;
+      ihaleler = parsed;
+      saveIhale();
+      ihaleler.sort((a,b) => parseDate(a.tarih) - parseDate(b.tarih));
+      render();
+      alert('✓ Veriler başarıyla yüklendi!');
+    } catch(err) { alert('Dosya okunamadı: ' + err.message); }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+loadIhale();
+ihaleler.sort((a,b) => parseDate(a.tarih) - parseDate(b.tarih));
+render();
+</script>
+</body>
+</html>

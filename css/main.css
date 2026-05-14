@@ -95,6 +95,47 @@ a:hover {
   font-size: 0.95rem;
 }
 
+.site-nav {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.site-nav__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.15rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--blue-deep);
+  background: var(--white);
+  border: 1px solid var(--cream-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 0 rgba(10, 31, 51, 0.05);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.site-nav__link:hover {
+  color: var(--blue-soft);
+  border-color: var(--blue-soft);
+  box-shadow: var(--shadow);
+}
+
+.site-nav__link:focus-visible {
+  outline: 2px solid var(--blue-soft);
+  outline-offset: 2px;
+}
+
 /* Durum filtreleri */
 .filter-bar {
   display: flex;
